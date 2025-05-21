@@ -10,7 +10,7 @@ export class User {
 
   constructor(input: CreateUser) {
     this.id = input?.id ?? randomUUID();
-    this.isActive = input?.isActive || true;
+    this.isActive = input?.isActive ?? true;
     this.email = input.email;
     this.profileId = input.profileId;
     this.firstName = input.firstName;
@@ -28,7 +28,7 @@ export class User {
     if (newStatus === this.isActive)
       throw new Error(`User already has this status (${newStatus})`);
 
-    this.isActive = !this.isActive;
+    this.isActive = newStatus;
   }
 }
 

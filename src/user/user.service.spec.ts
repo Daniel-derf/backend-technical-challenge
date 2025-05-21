@@ -1,17 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { UserInMemoryRepository } from './repository/user.in-memory.repository';
-import {
-  IUserRepository,
-  PaginationOptions,
-} from './repository/user.interface.repository';
-import { NotFoundException } from '@nestjs/common';
+import { PaginationOptions } from './repository/user.interface.repository';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 describe('UserService (InMemory)', () => {
   let service: UserService;
-  let repository: IUserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,7 +18,6 @@ describe('UserService (InMemory)', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    repository = module.get<IUserRepository>('IUserRepository');
   });
 
   it('should be defined', () => {
@@ -95,14 +90,14 @@ describe('UserService (InMemory)', () => {
     );
   });
 
-  it('should paginate getByProfile', async () => {
+  it('should paginate getByProfile via service', async () => {
     await service.create({
       firstName: 'Extra',
       lastName: 'Profile',
       email: 'extra@email.com',
       profileId: '101',
     });
-    const result = await repository.getByProfile(['101'], {
+    const result = await service.findAllByProfiles(['101'], {
       page: 1,
       limit: 2,
     });
@@ -132,7 +127,7 @@ describe('UserService (InMemory)', () => {
     }
 
     const profileId = '101';
-    const byProfile = await repository.getByProfile([profileId], {
+    const byProfile = await service.findAllByProfiles([profileId], {
       page: 2,
       limit: 5,
     });
@@ -153,5 +148,30 @@ describe('UserService (InMemory)', () => {
     } else {
       expect(lastPageResult.data.length).toBe(total % pageSize);
     }
+  });
+
+  it('should switch user status', async () => {
+    const users = await service.findAll({ page: 1, limit: 1 });
+    const userId = users.data[0].id;
+    const userBefore = await service.findOne(userId);
+    const newStatus = !userBefore.isActive;
+    await service.switchUserStatus(userId, newStatus);
+    const userAfter = await service.findOne(userId);
+    expect(userAfter.isActive).toBe(newStatus);
+  });
+
+  it('should throw BadRequestException if status is already set', async () => {
+    const users = await service.findAll({ page: 1, limit: 1 });
+    const userId = users.data[0].id;
+    const user = await service.findOne(userId);
+    await expect(
+      service.switchUserStatus(userId, user.isActive),
+    ).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw NotFoundException if user does not exist', async () => {
+    await expect(
+      service.switchUserStatus('non-existent-id', true),
+    ).rejects.toThrow(NotFoundException);
   });
 });

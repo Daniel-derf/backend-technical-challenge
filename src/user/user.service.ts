@@ -45,11 +45,15 @@ export class UserService {
   async switchUserStatus(userId: string, status: boolean) {
     const user = await this.usersRepository.getById(userId);
 
+    if (!user) throw new NotFoundException('User does not exist');
+
     try {
       user.switchStatus(status);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+
+    await this.usersRepository.save(user);
 
     return;
   }
