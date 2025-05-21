@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   BadRequestException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -30,8 +32,9 @@ export class UserController {
   @ApiOperation({ summary: 'Criar usuário' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: 'Usuário criado' })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+    return user;
   }
 
   @Get()
@@ -72,16 +75,18 @@ export class UserController {
   @ApiParam({ name: 'id', required: true, description: 'ID do usuário' })
   @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: 200, description: 'Usuário atualizado' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const updated = await this.userService.update(id, updateUserDto);
+    return { message: 'User updated successfully', user: updated };
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remover usuário' })
   @ApiParam({ name: 'id', required: true, description: 'ID do usuário' })
-  @ApiResponse({ status: 200, description: 'Usuário removido' })
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  @ApiResponse({ status: 204, description: 'Usuário removido' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
+    await this.userService.remove(id);
   }
 
   @Patch(':id/status')
@@ -95,11 +100,15 @@ export class UserController {
     },
   })
   @ApiResponse({ status: 200, description: 'Status do usuário atualizado' })
-  switchStatus(@Param('id') id: string, @Body('isActive') isActive: boolean) {
+  async switchStatus(
+    @Param('id') id: string,
+    @Body('isActive') isActive: boolean,
+  ) {
     if (typeof isActive !== 'boolean') {
       throw new BadRequestException('isActive must be boolean');
     }
-    return this.userService.switchUserStatus(id, isActive);
+    await this.userService.switchUserStatus(id, isActive);
+    return { message: 'User status updated successfully' };
   }
 
   @Get('/filter/by-profiles')
