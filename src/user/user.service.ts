@@ -55,6 +55,16 @@ export class UserService {
     const user = await this.usersRepository.getById(id);
     if (!user) throw new NotFoundException('User not found');
 
+    const newEmail = updateUserDto?.email;
+
+    if (newEmail) {
+      const emailAlreadyExists =
+        await this.usersRepository.getByEmail(newEmail);
+
+      if (emailAlreadyExists)
+        throw new BadRequestException('Email already exists');
+    }
+
     user.update(updateUserDto);
 
     await this.usersRepository.save(user);
