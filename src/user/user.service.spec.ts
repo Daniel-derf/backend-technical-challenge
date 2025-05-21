@@ -174,4 +174,24 @@ describe('UserService (InMemory)', () => {
       service.switchUserStatus('non-existent-id', true),
     ).rejects.toThrow(NotFoundException);
   });
+
+  it('should return profiles', async () => {
+    await service.create({
+      firstName: 'ProfileTest1',
+      lastName: 'User1',
+      email: 'profile1@email.com',
+      profileId: '101',
+    });
+    await service.create({
+      firstName: 'ProfileTest2',
+      lastName: 'User2',
+      email: 'profile2@email.com',
+      profileId: '102',
+    });
+
+    const result = await service.findAllProfiles();
+    expect(Array.isArray(result)).toBe(true);
+    expect(result[0]).toHaveProperty('id');
+    expect(result[0]).toHaveProperty('name');
+  });
 });

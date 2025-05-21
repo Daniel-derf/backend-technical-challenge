@@ -16,11 +16,11 @@ export interface PaginatedResult<T> {
 export interface IUserRepository {
   getAll(options: PaginationOptions): Promise<PaginatedResult<User>>;
   getById(userId: string): Promise<User>;
+  getAllProfiles(): Promise<Profile[]>;
   getByProfile(
     profilesIds: string[],
     options?: PaginationOptions,
   ): Promise<PaginatedResult<User>>;
-  getAllProfiles(options: PaginationOptions): Promise<Profile[]>;
   save(user: User): Promise<void>;
   delete(userId: string): Promise<void>;
 }
