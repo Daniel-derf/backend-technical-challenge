@@ -7,7 +7,7 @@ import {
 } from './user.interface.repository';
 
 // Data types
-type DataUser = Omit<User, 'update'>;
+type DataUser = Omit<User, 'update' | 'switchStatus'>;
 type DataProfile = Profile;
 
 export class UserInMemoryRepository implements IUserRepository {

@@ -22,7 +22,13 @@ export class User {
     if (input.lastName !== undefined) this.lastName = input.lastName;
     if (input.email !== undefined) this.email = input.email;
     if (input.profileId !== undefined) this.profileId = input.profileId;
-    if (input.isActive !== undefined) this.isActive = input.isActive;
+  }
+
+  switchStatus(newStatus: boolean) {
+    if (newStatus === this.isActive)
+      throw new Error(`User already has this status (${newStatus})`);
+
+    this.isActive = !this.isActive;
   }
 }
 

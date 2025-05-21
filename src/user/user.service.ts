@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
@@ -31,6 +36,22 @@ export class UserService {
     if (!user) throw new NotFoundException('User not found');
 
     return user;
+  }
+
+  async findAllByProfiles(profilesIds: string[], options?: PaginationOptions) {
+    return this.usersRepository.getByProfile(profilesIds, options);
+  }
+
+  async switchUserStatus(userId: string, status: boolean) {
+    const user = await this.usersRepository.getById(userId);
+
+    try {
+      user.switchStatus(status);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+
+    return;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
