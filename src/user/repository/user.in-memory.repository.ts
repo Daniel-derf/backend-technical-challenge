@@ -121,4 +121,12 @@ export class UserInMemoryRepository implements IUserRepository {
     if (index === -1) throw new Error('User not found');
     this.users.splice(index, 1);
   }
+
+  async getByEmail(userEmail: string): Promise<User> {
+    const dataUser = this.users.find((u) => u.email === userEmail);
+    if (!dataUser) {
+      return null;
+    }
+    return new User(dataUser);
+  }
 }

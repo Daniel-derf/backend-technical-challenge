@@ -26,6 +26,13 @@ export class UserService {
 
     if (!profile) throw new BadRequestException('Profile not found');
 
+    const emailAlreadyExists = await this.usersRepository.getByEmail(
+      createUserDto.email,
+    );
+
+    if (emailAlreadyExists)
+      throw new BadRequestException('Email already exists');
+
     const user = new User(createUserDto);
 
     await this.usersRepository.save(user);

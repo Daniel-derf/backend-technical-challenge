@@ -37,6 +37,25 @@ export class UserController {
     return user;
   }
 
+  @Get('/profiles')
+  @ApiOperation({ summary: 'Listar todos os perfis (paginado)' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Limite por página',
+  })
+  @ApiResponse({ status: 200, description: 'Lista de perfis' })
+  findAllProfiles() {
+    return this.userService.findAllProfiles();
+  }
+
   @Get()
   @ApiOperation({ summary: 'Listar usuários com paginação' })
   @ApiQuery({
@@ -147,24 +166,5 @@ export class UserController {
       page: Number(page) || 1,
       limit: Number(limit) || 10,
     });
-  }
-
-  @Get('/profiles')
-  @ApiOperation({ summary: 'Listar todos os perfis (paginado)' })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    description: 'Página',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Limite por página',
-  })
-  @ApiResponse({ status: 200, description: 'Lista de perfis' })
-  findAllProfiles() {
-    return this.userService.findAllProfiles();
   }
 }

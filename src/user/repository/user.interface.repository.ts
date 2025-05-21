@@ -16,6 +16,7 @@ export interface PaginatedResult<T> {
 export interface IUserRepository {
   getAll(options: PaginationOptions): Promise<PaginatedResult<User>>;
   getById(userId: string): Promise<User>;
+  getByEmail(userEmail: string): Promise<User>;
   getAllProfiles(): Promise<Profile[]>;
   getProfileById(profileId: string): Promise<Profile>;
   getByProfile(
