@@ -20,6 +20,12 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const profile = await this.usersRepository.getProfileById(
+      createUserDto.profileId,
+    );
+
+    if (!profile) throw new BadRequestException('Profile not found');
+
     const user = new User(createUserDto);
 
     await this.usersRepository.save(user);

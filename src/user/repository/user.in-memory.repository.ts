@@ -71,6 +71,16 @@ export class UserInMemoryRepository implements IUserRepository {
     return new User(dataUser);
   }
 
+  async getProfileById(profileId: string): Promise<Profile> {
+    const profile = this.profiles.find((p) => p.id === profileId);
+
+    if (!profile) {
+      return null;
+    }
+
+    return profile;
+  }
+
   async getByProfile(
     profilesIds: string[],
     options?: PaginationOptions,
