@@ -21,27 +21,37 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-@ApiTags('users')
+@ApiTags('Usuários')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create user' })
+  @ApiOperation({ summary: 'Criar usuário' })
   @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ status: 201, description: 'User created' })
+  @ApiResponse({ status: 201, description: 'Usuário criado' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'List users with pagination' })
-  @ApiQuery({ name: 'page', required: true, type: Number })
-  @ApiQuery({ name: 'limit', required: true, type: Number })
-  @ApiResponse({ status: 200, description: 'Paginated users list' })
+  @ApiOperation({ summary: 'Listar usuários com paginação' })
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    type: Number,
+    description: 'Página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: true,
+    type: Number,
+    description: 'Limite por página',
+  })
+  @ApiResponse({ status: 200, description: 'Lista paginada de usuários' })
   findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
     if (!page || !limit) {
-      throw new BadRequestException('page and limit are required');
+      throw new BadRequestException('page e limit são obrigatórios');
     }
     return this.userService.findAll({
       page: Number(page),
@@ -50,59 +60,78 @@ export class UserController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by id' })
-  @ApiParam({ name: 'id', required: true })
-  @ApiResponse({ status: 200, description: 'User found' })
+  @ApiOperation({ summary: 'Buscar usuário por ID' })
+  @ApiParam({ name: 'id', required: true, description: 'ID do usuário' })
+  @ApiResponse({ status: 200, description: 'Usuário encontrado' })
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update user' })
-  @ApiParam({ name: 'id', required: true })
+  @ApiOperation({ summary: 'Atualizar usuário' })
+  @ApiParam({ name: 'id', required: true, description: 'ID do usuário' })
   @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ status: 200, description: 'User updated' })
+  @ApiResponse({ status: 200, description: 'Usuário atualizado' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete user' })
-  @ApiParam({ name: 'id', required: true })
-  @ApiResponse({ status: 200, description: 'User deleted' })
+  @ApiOperation({ summary: 'Remover usuário' })
+  @ApiParam({ name: 'id', required: true, description: 'ID do usuário' })
+  @ApiResponse({ status: 200, description: 'Usuário removido' })
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
 
   @Patch(':id/status')
-  @ApiOperation({ summary: 'Activate/deactivate user' })
-  @ApiParam({ name: 'id', required: true })
-  @ApiBody({ schema: { properties: { isActive: { type: 'boolean' } } } })
-  @ApiResponse({ status: 200, description: 'User status updated' })
+  @ApiOperation({ summary: 'Ativar/desativar usuário' })
+  @ApiParam({ name: 'id', required: true, description: 'ID do usuário' })
+  @ApiBody({
+    schema: {
+      properties: {
+        isActive: { type: 'boolean', description: 'Novo status do usuário' },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Status do usuário atualizado' })
   switchStatus(@Param('id') id: string, @Body('isActive') isActive: boolean) {
     if (typeof isActive !== 'boolean') {
-      throw new BadRequestException('isActive must be boolean');
+      throw new BadRequestException('isActive deve ser booleano');
     }
     return this.userService.switchUserStatus(id, isActive);
   }
 
   @Get('/filter/by-profiles')
-  @ApiOperation({ summary: 'Filter users by profile ids' })
+  @ApiOperation({ summary: 'Filtrar usuários por perfis' })
   @ApiQuery({
     name: 'profiles',
     required: true,
-    description: 'Comma separated profile ids',
+    description: 'IDs dos perfis separados por vírgula',
   })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Filtered users list' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Limite por página',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuários filtrada por perfis',
+  })
   findAllByProfiles(
     @Query('profiles') profiles: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     if (!profiles) {
-      throw new BadRequestException('profiles is required');
+      throw new BadRequestException('profiles é obrigatório');
     }
     const profilesIds = profiles.split(',');
     return this.userService.findAllByProfiles(profilesIds, {
@@ -112,10 +141,20 @@ export class UserController {
   }
 
   @Get('/profiles')
-  @ApiOperation({ summary: 'List all profiles (paginated)' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Profiles list' })
+  @ApiOperation({ summary: 'Listar todos os perfis (paginado)' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Limite por página',
+  })
+  @ApiResponse({ status: 200, description: 'Lista de perfis' })
   findAllProfiles() {
     return this.userService.findAllProfiles();
   }
