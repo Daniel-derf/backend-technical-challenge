@@ -6,16 +6,55 @@ import {
   PaginationOptions,
 } from './user.interface.repository';
 
+// Data types
+type DataUser = Omit<User, 'update'>;
+type DataProfile = Profile;
+
 export class UserInMemoryRepository implements IUserRepository {
-  private users: User[] = [];
-  private profiles: Profile[] = [];
+  private users: DataUser[] = [
+    {
+      id: '1',
+      firstName: 'Alice',
+      lastName: 'Silva',
+      email: 'alice@email.com',
+      isActive: true,
+      profileId: '101',
+    },
+    {
+      id: '2',
+      firstName: 'Bruno',
+      lastName: 'Souza',
+      email: 'bruno@email.com',
+      isActive: true,
+      profileId: '102',
+    },
+    {
+      id: '3',
+      firstName: 'Carla',
+      lastName: 'Oliveira',
+      email: 'carla@email.com',
+      isActive: false,
+      profileId: '101',
+    },
+  ];
+
+  private profiles: DataProfile[] = [
+    {
+      id: '101',
+      name: 'Admin',
+    },
+    {
+      id: '102',
+      name: 'User',
+    },
+  ];
 
   async getAll(options?: PaginationOptions): Promise<PaginatedResult<User>> {
     const page = options?.page ?? 1;
     const limit = options?.limit ?? 10;
     const start = (page - 1) * limit;
     const end = start + limit;
-    const data = this.users.slice(start, end);
+    const data = this.users.slice(start, end).map((user) => new User(user));
 
     return {
       data,
@@ -26,27 +65,29 @@ export class UserInMemoryRepository implements IUserRepository {
   }
 
   async getById(userId: string): Promise<User> {
-    const user = this.users.find((u) => u.id === userId);
-    if (!user) throw new Error('User not found');
-    return user;
+    const dataUser = this.users.find((u) => u.id === userId);
+    if (!dataUser) throw new Error('User not found');
+
+    return new User(dataUser);
   }
 
   async getByProfile(
     profilesIds: string[],
     options?: PaginationOptions,
   ): Promise<PaginatedResult<User>> {
-    const filtered = this.users.filter((u) =>
-      profilesIds.includes(u.profileId),
-    );
+    const filteredOutput = this.users
+      .filter((u) => profilesIds.includes(u.profileId))
+      .map((user) => new User(user));
+
     const page = options?.page ?? 1;
     const limit = options?.limit ?? 10;
     const start = (page - 1) * limit;
     const end = start + limit;
-    const data = filtered.slice(start, end);
+    const data = filteredOutput.slice(start, end);
 
     return {
       data,
-      total: filtered.length,
+      total: filteredOutput.length,
       page,
       limit,
     };
