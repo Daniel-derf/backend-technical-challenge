@@ -71,7 +71,9 @@ describe('UserController', () => {
   });
 
   it('should call service.update on update', async () => {
-    const dto: UpdateUserDto = { firstName: 'Updated' };
+    const dto: UpdateUserDto = {
+      firstName: 'Updated',
+    };
     (service.update as jest.Mock).mockResolvedValue({ id: '1', ...dto });
     const result = await controller.update('1', dto);
     expect(service.update).toHaveBeenCalledWith('1', dto);
