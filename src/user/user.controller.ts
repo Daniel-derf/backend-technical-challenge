@@ -51,7 +51,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Lista paginada de usuários' })
   findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
     if (!page || !limit) {
-      throw new BadRequestException('page e limit são obrigatórios');
+      throw new BadRequestException('page and limit are required');
     }
     return this.userService.findAll({
       page: Number(page),
@@ -97,7 +97,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Status do usuário atualizado' })
   switchStatus(@Param('id') id: string, @Body('isActive') isActive: boolean) {
     if (typeof isActive !== 'boolean') {
-      throw new BadRequestException('isActive deve ser booleano');
+      throw new BadRequestException('isActive must be boolean');
     }
     return this.userService.switchUserStatus(id, isActive);
   }
@@ -131,7 +131,7 @@ export class UserController {
     @Query('limit') limit?: string,
   ) {
     if (!profiles) {
-      throw new BadRequestException('profiles é obrigatório');
+      throw new BadRequestException('profiles is required');
     }
     const profilesIds = profiles.split(',');
     return this.userService.findAllByProfiles(profilesIds, {
