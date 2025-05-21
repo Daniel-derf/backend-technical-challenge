@@ -96,7 +96,6 @@ describe('UserService (InMemory)', () => {
   });
 
   it('should paginate getByProfile', async () => {
-    // Adiciona mais usuários para garantir a paginação
     await service.create({
       firstName: 'Extra',
       lastName: 'Profile',
@@ -111,5 +110,48 @@ describe('UserService (InMemory)', () => {
     expect(result.page).toBe(1);
     expect(result.limit).toBe(2);
     expect(result.data.every((u) => u.profileId === '101')).toBe(true);
+  });
+
+  it('should paginate correctly with many users', async () => {
+    const totalUsers = 50;
+    for (let i = 0; i < totalUsers; i++) {
+      await service.create({
+        firstName: `User${i}`,
+        lastName: `Test${i}`,
+        email: `user${i}@email.com`,
+        profileId: i % 2 === 0 ? '101' : '102',
+      });
+    }
+
+    const pageSize = 10;
+    for (let page = 1; page <= 5; page++) {
+      const result = await service.findAll({ page, limit: pageSize });
+      expect(result.data.length).toBeLessThanOrEqual(pageSize);
+      expect(result.page).toBe(page);
+      expect(result.limit).toBe(pageSize);
+    }
+
+    const profileId = '101';
+    const byProfile = await repository.getByProfile([profileId], {
+      page: 2,
+      limit: 5,
+    });
+    expect(byProfile.data.length).toBeLessThanOrEqual(5);
+    expect(byProfile.page).toBe(2);
+    expect(byProfile.limit).toBe(5);
+    expect(byProfile.data.every((u) => u.profileId === profileId)).toBe(true);
+
+    const allUsers = await service.findAll({ page: 1, limit: 1000 });
+    const total = allUsers.total;
+    const lastPage = Math.ceil(total / pageSize);
+    const lastPageResult = await service.findAll({
+      page: lastPage,
+      limit: pageSize,
+    });
+    if (total % pageSize === 0) {
+      expect(lastPageResult.data.length).toBe(pageSize);
+    } else {
+      expect(lastPageResult.data.length).toBe(total % pageSize);
+    }
   });
 });
