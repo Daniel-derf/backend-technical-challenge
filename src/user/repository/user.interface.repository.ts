@@ -1,3 +1,4 @@
+import { Profile } from '../entities/profile.entity';
 import { User } from '../entities/user.entity';
 
 export interface PaginationOptions {
@@ -13,9 +14,13 @@ export interface PaginatedResult<T> {
 }
 
 export interface IUserRepository {
-  getAll(): Promise<PaginatedResult<User>>;
+  getAll(options: PaginationOptions): Promise<PaginatedResult<User>>;
   getById(userId: string): Promise<User>;
-  getByProfile(profilesIds: string[]): Promise<PaginatedResult<User>>;
+  getByProfile(
+    profilesIds: string[],
+    options?: PaginationOptions,
+  ): Promise<PaginatedResult<User>>;
+  getAllProfiles(options: PaginationOptions): Promise<Profile[]>;
   save(user: User): Promise<void>;
   delete(userId: string): Promise<void>;
 }
