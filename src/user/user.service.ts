@@ -38,30 +38,6 @@ export class UserService {
     return user;
   }
 
-  async findAllProfiles() {
-    return this.usersRepository.getAllProfiles();
-  }
-
-  async findAllByProfiles(profilesIds: string[], options?: PaginationOptions) {
-    return this.usersRepository.getByProfile(profilesIds, options);
-  }
-
-  async switchUserStatus(userId: string, status: boolean) {
-    const user = await this.usersRepository.getById(userId);
-
-    if (!user) throw new NotFoundException('User does not exist');
-
-    try {
-      user.switchStatus(status);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-
-    await this.usersRepository.save(user);
-
-    return;
-  }
-
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.usersRepository.getById(id);
     if (!user) throw new NotFoundException('User not found');
@@ -82,5 +58,27 @@ export class UserService {
     await this.usersRepository.delete(id);
 
     return;
+  }
+
+  async switchUserStatus(userId: string, status: boolean) {
+    const user = await this.usersRepository.getById(userId);
+
+    if (!user) throw new NotFoundException('User does not exist');
+
+    try {
+      user.switchStatus(status);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+
+    await this.usersRepository.save(user);
+  }
+
+  async findAllProfiles() {
+    return this.usersRepository.getAllProfiles();
+  }
+
+  async findAllByProfiles(profilesIds: string[], options?: PaginationOptions) {
+    return this.usersRepository.getByProfile(profilesIds, options);
   }
 }
