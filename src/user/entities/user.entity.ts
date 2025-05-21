@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 export class User {
   id: string;
   firstName: string;
@@ -7,7 +9,7 @@ export class User {
   profileId: string;
 
   constructor(input: CreateUser) {
-    this.id = input?.id;
+    this.id = input?.id ?? randomUUID();
     this.isActive = input?.isActive || true;
     this.email = input.email;
     this.profileId = input.profileId;
