@@ -13,38 +13,38 @@ type DataProfile = Profile;
 export class UserInMemoryRepository implements IUserRepository {
   private users: DataUser[] = [
     {
-      id: '1',
+      id: 'b1a7e8c2-1f2d-4e5a-9c3f-1a2b3c4d5e6f',
       firstName: 'Alice',
       lastName: 'Silva',
       email: 'alice@email.com',
       isActive: true,
-      profileId: '101',
+      profileId: 'a101b202-c303-d404-e505-f606a707b808',
     },
     {
-      id: '2',
+      id: 'c2b8f9d3-2e3f-5a6b-0c4d-2b3c4d5e6f7a',
       firstName: 'Bruno',
       lastName: 'Souza',
       email: 'bruno@email.com',
       isActive: true,
-      profileId: '102',
+      profileId: 'b202c303-d404-e505-f606-a707b808c909',
     },
     {
-      id: '3',
+      id: 'd3c9g0e4-3f4g-6b7c-1d5e-3c4d5e6f7a8b',
       firstName: 'Carla',
       lastName: 'Oliveira',
       email: 'carla@email.com',
       isActive: false,
-      profileId: '101',
+      profileId: 'a101b202-c303-d404-e505-f606a707b808',
     },
   ];
 
   private profiles: DataProfile[] = [
     {
-      id: '101',
+      id: 'a101b202-c303-d404-e505-f606a707b808',
       name: 'Admin',
     },
     {
-      id: '102',
+      id: 'b202c303-d404-e505-f606-a707b808c909',
       name: 'User',
     },
   ];
