@@ -17,8 +17,10 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('User API')
-    .setDescription('API for user management')
+    .setTitle('Users & Profiles API - Desafio técnico')
+    .setDescription(
+      'API de gerenciamento de usuários e perfis desenvolvida para o desafio técnico full stack',
+    )
     .setVersion('1.0')
     .build();
 
