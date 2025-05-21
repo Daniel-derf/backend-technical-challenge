@@ -14,6 +14,14 @@ export class User {
     this.firstName = input.firstName;
     this.lastName = input.lastName;
   }
+
+  update(input: UpdateUser) {
+    if (input.firstName !== undefined) this.firstName = input.firstName;
+    if (input.lastName !== undefined) this.lastName = input.lastName;
+    if (input.email !== undefined) this.email = input.email;
+    if (input.profileId !== undefined) this.profileId = input.profileId;
+    if (input.isActive !== undefined) this.isActive = input.isActive;
+  }
 }
 
 type CreateUser = {
@@ -24,3 +32,5 @@ type CreateUser = {
   isActive?: boolean;
   id?: string;
 };
+
+type UpdateUser = Partial<CreateUser>;
