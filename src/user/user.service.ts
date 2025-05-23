@@ -101,7 +101,7 @@ export class UserService {
     return this.usersRepository.getAllProfiles();
   }
 
-  async findAllByProfiles(profilesIds: string[], options?: PaginationOptions) {
-    return this.usersRepository.getByProfile(profilesIds, options);
+  async findAllByProfiles(profilesIds: string[]) {
+    return this.usersRepository.getByProfile(profilesIds);
   }
 }

@@ -153,18 +153,11 @@ export class UserController {
     status: 200,
     description: 'Lista de usuários filtrada por perfis',
   })
-  findAllByProfiles(
-    @Query('profiles') profiles: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  findAllByProfiles(@Query('profiles') profiles: string) {
     if (!profiles) {
       throw new BadRequestException('profiles is required');
     }
     const profilesIds = profiles.split(',');
-    return this.userService.findAllByProfiles(profilesIds, {
-      page: Number(page) || 1,
-      limit: Number(limit) || 10,
-    });
+    return this.userService.findAllByProfiles(profilesIds);
   }
 }
