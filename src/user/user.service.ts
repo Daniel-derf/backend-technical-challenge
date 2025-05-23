@@ -58,8 +58,9 @@ export class UserService {
     const newEmail = updateUserDto?.email;
 
     if (newEmail) {
-      const emailAlreadyExists =
-        await this.usersRepository.getByEmail(newEmail);
+      const existentUser = await this.usersRepository.getByEmail(newEmail);
+
+      const emailAlreadyExists = existentUser && existentUser.id != user.id;
 
       if (emailAlreadyExists)
         throw new BadRequestException('Email already exists');
