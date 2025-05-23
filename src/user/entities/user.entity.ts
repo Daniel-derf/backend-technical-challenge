@@ -10,7 +10,7 @@ export class User {
 
   constructor(input: CreateUser) {
     this.id = input?.id ?? randomUUID();
-    this.isActive = input?.isActive ?? true;
+    this.isActive = input.isActive;
     this.email = input.email;
     this.profileId = input.profileId;
     this.firstName = input.firstName;
@@ -37,7 +37,7 @@ type CreateUser = {
   lastName: string;
   email: string;
   profileId: string;
-  isActive?: boolean;
+  isActive: boolean;
   id?: string;
 };
 
